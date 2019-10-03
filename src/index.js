@@ -39,6 +39,29 @@ app.get('/users/:id',(request,res)=>{
    })
 })
 
+
+app.get('/tasks',(request,res)=>{
+    Task.find({}).then((tasks)=>{
+       res.status(201).send(tasks);
+    }).catch((e)=>{
+        res.status(400).send(e);
+    })
+})
+
+
+app.get('/tasks/:id',(request,res)=>{
+   const _id = request.params.id
+   Task.findById(_id).then((task)=>{
+     if(!task){
+         return res.status(404).send();
+     }
+     res.send(task);
+   }).catch((e)=>{
+    return res.status(500).send()
+   })
+})
+
+
 app.post('/tasks',(request,res)=>{
     const task = new Task(request.body)
     task.save().then(()=>{
