@@ -111,6 +111,7 @@ app.patch('/users/:id',async(request,res)=>{
 })
 
 
+
 app.patch('/tasks/:id',async(request,res)=>{  
     const updates = Object.keys(request.body) //To convert the object of being updated things into array and storing it in updates
     const allowedUpdates = ['description','completed'] //Adding those fields in array of strings which are allowed to be updated
@@ -131,6 +132,31 @@ app.patch('/tasks/:id',async(request,res)=>{
         res.status(400).send(e)
     }
 })
+
+app.delete('/users/:id',async(request,res)=>{
+    try{
+      const user = await User.findByIdAndDelete(request.params.id)
+      if(!user){
+          return res.status(404).send()
+      }
+      res.send(user)
+    }catch(e){
+       res.status(500).send() 
+    }
+})
+
+app.delete('/tasks/:id',async(request,res)=>{
+    try{
+      const task = await Task.findByIdAndDelete(request.params.id)
+      if(!task){
+          return res.status(404).send()
+      }
+      res.send(task)
+    }catch(e){
+       res.status(500).send() 
+    }
+})
+
 
 app.listen(port,()=>{
     console.log('Server is up on port'+port);
