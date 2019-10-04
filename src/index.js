@@ -88,7 +88,50 @@ app.post('/tasks',async(request,res)=>{
         res.status(400).send(e)
     }
 })
- 
+
+
+app.patch('/users/:id',async(request,res)=>{  
+    const updates = Object.keys(request.body)
+    const allowedUpdates = ['name','email','password','age']
+    const isValidOperation =  updates.every((update)=>{
+            return allowedUpdates.includes(update)
+    })
+    if(!isValidOperation){
+       return res.status(400).send({error:'Invalid updates!'}) 
+    }
+    try{
+       const user =  await User.findByIdAndUpdate(request.params.id, request.body, {new: true, runValidators:true})
+        if(!user){
+            return res.status(404).send()
+        }
+        res.send(user)
+    }catch(e){
+        res.status(400).send(e)
+    }
+})
+
+
+app.patch('/tasks/:id',async(request,res)=>{  
+    const updates = Object.keys(request.body) //To convert the object of being updated things into array and storing it in updates
+    const allowedUpdates = ['description','completed'] //Adding those fields in array of strings which are allowed to be updated
+    const isValidOperation =  updates.every((update)=>{ // For each update in updates comparing 
+            return allowedUpdates.includes(update) //if allowedUpdates array includes the update the user is requesting to update
+    })
+    if(!isValidOperation){ //if update is not found in updates array we do this
+       return res.status(400).send({error:'Invalid updates!'}) 
+    }
+    // else we go forward and update
+    try{ 
+       const task =  await Task.findByIdAndUpdate(request.params.id, request.body, {new: true, runValidators:true})
+        if(!task){
+            return res.status(404).send()
+        }
+        res.send(task)
+    }catch(e){
+        res.status(400).send(e)
+    }
+})
+
 app.listen(port,()=>{
     console.log('Server is up on port'+port);
 })
