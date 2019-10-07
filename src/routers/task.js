@@ -44,7 +44,7 @@ router.get('/tasks',async(request,res)=>{
              return allowedUpdates.includes(update) //if allowedUpdates array includes the update the user is requesting to update
      })
      if(!isValidOperation){ //if update is not found in updates array we do this
-        return res.st atus(400).send({error:'Invalid updates!'}) 
+        return res.status(400).send({error:'Invalid updates!'}) 
      }
      // else we go forward and update
      try{ 

@@ -43,7 +43,7 @@ router.get('/users/:id',async(request,res)=>{
       }
       res.send(user)
     }catch(e){
-     res.status(500).send()
+     res.status(400).send()
    }
    
 })
@@ -59,7 +59,11 @@ router.patch('/users/:id',async(request,res)=>{
        return res.status(400).send({error:'Invalid updates!'}) 
     }
     try{
-       const user =  await User.findByIdAndUpdate(request.params.id, request.body, {new: true, runValidators:true})
+        const user = await User.findById(request.params.id)
+        updates.forEach((update)=>{
+              user[update]=request.body[update]
+        })
+        await user.save() // this where middleware runs before this happens
         if(!user){
             return res.status(404).send()
         }
@@ -82,5 +86,13 @@ router.delete('/users/:id',async(request,res)=>{
     }
 })
 
+router.post('/users/login',async(req,res)=>{
+    try{
+      const user = await User.findByCredentials(req.body.email,req.body.password)
+      res.send(user)
+    }catch(e){
+        res.status(400).send() 
+    }
+})
 
 module.exports = router
