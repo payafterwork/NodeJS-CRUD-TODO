@@ -44,11 +44,15 @@ router.get('/tasks',async(request,res)=>{
              return allowedUpdates.includes(update) //if allowedUpdates array includes the update the user is requesting to update
      })
      if(!isValidOperation){ //if update is not found in updates array we do this
-        return res.status(400).send({error:'Invalid updates!'}) 
+        return res.st atus(400).send({error:'Invalid updates!'}) 
      }
      // else we go forward and update
      try{ 
-        const task =  await Task.findByIdAndUpdate(request.params.id, request.body, {new: true, runValidators:true})
+        const task =  await Task.findById(request.params.id)
+        updates.forEach((update)=>{
+          task[update] = request.body[update]
+        })          
+        await task.save()
          if(!task){
              return res.status(404).send()
          }
